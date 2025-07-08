@@ -8,7 +8,7 @@ export const registration = async (req: Request, res: Response) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return errorResponse(res, errors.array(), 400);
+    return errorResponse(res, 400, errors.array());
   }
 
   const data = matchedData(req);
@@ -39,18 +39,17 @@ export const registration = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-
     // If in development mode, return detailed error messages for debugging :)
     if (process.env.NODE_ENV === "DEVELOPMENT") {
       if (error.name === "JsonWebTokenError") {
-        return errorResponse(res, error.message, 500);
+        return errorResponse(res, 500, error.message);
       }
     }
 
     if (error instanceof RegistrationError) {
-      return errorResponse(res, error.message, 401);
+      return errorResponse(res, 401, error.message);
     }
 
-    return errorResponse(res, "Internal server error", 500);
+    return errorResponse(res, 500, "Internal server error");
   }
 };

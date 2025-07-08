@@ -8,7 +8,7 @@ export const login = async (req: Request, res: Response) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return errorResponse(res, 422, errors.array());
   }
 
   const data = matchedData(req);
@@ -41,14 +41,14 @@ export const login = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (process.env.NODE_ENV === "DEVELOPMENT") {
       if (error.name === "JsonWebTokenError") {
-        return errorResponse(res, error.message, 500);
+        return errorResponse(res, 500, error.message);
       }
     }
 
     if (error instanceof AuthenticationError) {
-      return errorResponse(res, error.message, 401);
+      return errorResponse(res, 401, error.message);
     }
 
-    return res.status(500).json({ message: "Internal server error" });
+    return errorResponse(res, 500, "Internal server error");
   }
 };

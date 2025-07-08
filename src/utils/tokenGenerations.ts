@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import prisma from "@/config/prismaConfig";
 import { hashRefreshToken } from "@/utils/tokenHashing";
 import { v4 as uuidv4 } from "uuid";
+import { AccessTokenPayload } from "@/types/token";
 dotenv.config();
 
 /**
@@ -13,7 +14,7 @@ dotenv.config();
  * @returns A signed JWT access token.
  */
 export const generateAccessToken = (
-  tokenPayload: AccessTokenPayloadTypes
+  tokenPayload: AccessTokenPayload
 ): string => {
   const SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 

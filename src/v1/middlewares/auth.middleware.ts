@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import prisma from "@/config/prismaConfig";
+import { errorResponse } from "@/utils/responseHandler";
 dotenv.config();
 
 /**
@@ -19,16 +20,15 @@ export const authMiddleware = async (
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+    return errorResponse(res, 401, "No token provided");
   }
 
   const token = authHeader.split(" ")[1];
 
+  const SECRET = process.env.JWT_ACCESS_TOKEN_SECRET as string;
+
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_ACCESS_TOKEN_SECRET as string
-    ) as {
+    const decoded = jwt.verify(token, SECRET) as {
       user_id: string;
       email: string;
       role: string;
@@ -39,11 +39,11 @@ export const authMiddleware = async (
     });
 
     if (!user) {
-      return res.status(403).json({ message: "Invalid token or unauthorized" });
+      return errorResponse(res, 403, "Invalid token or unauthorized");
     }
 
     if (user.email !== decoded.email || user.role !== decoded.role) {
-      return res.status(403).json({ message: "Invalid token or unauthorized" });
+      return errorResponse(res, 403, "Invalid token or unauthorized");
     }
 
     req.user = {
@@ -55,8 +55,8 @@ export const authMiddleware = async (
     next();
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Access token expired" });
+      return errorResponse(res, 401, "Access token expired");
     }
-    return res.status(403).json({ message: "Invalid token or unauthorized" });
+    return errorResponse(res, 403, "Invalid token or unauthorized");
   }
 };

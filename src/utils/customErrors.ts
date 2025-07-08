@@ -40,3 +40,9 @@ export class ForbiddenError extends AppError {
     super(message, 403, "ForbiddenError");
   }
 }
+
+export class EmptyTokenError extends AppError {
+  constructor(message = "Token error") {
+    super(message, 401, "TokenError");
+  }
+}
