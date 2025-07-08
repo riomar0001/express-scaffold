@@ -3,6 +3,7 @@ import { matchedData, validationResult } from "express-validator";
 import { registerService } from "@services/authentication/register.service";
 import { RegistrationError } from "@utils/customErrors";
 import { errorResponse, successResponse } from "@utils/responseHandler";
+import { access } from "fs";
 
 export const registration = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -31,7 +32,7 @@ export const registration = async (req: Request, res: Response) => {
     });
 
     return successResponse(res, 201, "Registration successful", {
-      accessToken,
+      access_token: accessToken,
       user: {
         id: user.id,
         email: user.email,

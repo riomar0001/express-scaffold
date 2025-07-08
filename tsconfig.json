@@ -18,6 +18,9 @@
             "@/*": [
                 "./src/*"
             ],
+            "@cron/*": [
+                "./src/cron/*"
+            ],
             "@configs/*": [
                 "./src/configs/*"
             ],

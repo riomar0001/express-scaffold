@@ -31,7 +31,7 @@ export const login = async (req: Request, res: Response) => {
     });
 
     return successResponse(res, 200, "Login successful", {
-      accessToken,
+      access_token: accessToken,
       user: {
         id: user.id,
         email: user.email,
