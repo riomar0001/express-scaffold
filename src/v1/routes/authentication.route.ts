@@ -13,9 +13,9 @@ import { user } from "@/v1/controllers/authentication/user.controller";
 import { UserRole } from "@/constants/userRole";
 
 import {
-  authentication,
+  login,
   registration,
-  refreshTokenController,
+  refreshToken,
   logout,
 } from "@/v1/controllers/authentication";
 
@@ -24,14 +24,9 @@ const router = express.Router();
 router.get("/user", authMiddleware, user);
 router.get("/admin", authMiddleware, checkRole(UserRole.ADMIN), admin);
 
-router.post(
-  "/",
-  checkSchema(authenticationValidators),
-  authRateLimiter,
-  authentication
-);
+router.post("/", checkSchema(authenticationValidators), authRateLimiter, login);
 router.post("/register", checkSchema(registrationValidators), registration);
-router.post("/refresh", refreshTokenController);
+router.post("/refresh", refreshToken);
 router.post("/logout", logout);
 
 export default router;

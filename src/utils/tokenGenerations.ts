@@ -43,7 +43,7 @@ export const generateRefreshToken = async (
   user_id: string,
   ip: string,
   user_agent: string
-): Promise<RefreshTokenData> => {
+) => {
   const SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
 
   if (!SECRET) throw new Error("JWT refresh secret not defined");
@@ -70,5 +70,5 @@ export const generateRefreshToken = async (
     },
   });
 
-  return { token, token_id, expires_at };
+  return token;
 };

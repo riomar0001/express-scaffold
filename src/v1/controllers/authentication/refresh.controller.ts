@@ -6,7 +6,7 @@ import { verifyHashedRefreshToken } from "@/utils/tokenHashing";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const refreshTokenController = async (req: Request, res: Response) => {
+export const refreshToken = async (req: Request, res: Response) => {
   try {
     const { refresh_token } = req.cookies;
 

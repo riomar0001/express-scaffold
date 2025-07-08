@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
-import prisma from "@/config/prismaConfig";
 import { matchedData, validationResult } from "express-validator";
-import { verifyPassword } from "@/utils/passwordHashing";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "@/utils/tokenGenerations";
-import { truncateIp } from "@/utils/truncateIP";
+import { loginService } from "@/v1/services/authentication/login.service";
+import { AuthenticationError } from "@/utils/customErrors";
 
-export const authentication = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -20,28 +15,11 @@ export const authentication = async (req: Request, res: Response) => {
   const { email, password } = data as { email: string; password: string };
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const isPasswordValid = await verifyPassword(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const ip_address = req.ip as string;
-    const truncatedIp = truncateIp(ip_address);
-    const user_agent = req.headers["user-agent"] || "";
-
-    const { token: refreshToken } = await generateRefreshToken(
-      user.id,
-      truncatedIp as string,
-      user_agent
+    const { user, refreshToken, accessToken } = await loginService(
+      email,
+      password,
+      req.ip as string,
+      req.headers["user-agent"] || ""
     );
 
     res.cookie("refresh_token", refreshToken, {
@@ -49,12 +27,6 @@ export const authentication = async (req: Request, res: Response) => {
       secure: process.env.NODE_ENV === "PRODUCTION",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    const accessToken = generateAccessToken({
-      user_id: user.id,
-      email: user.email,
-      role: user.role,
     });
 
     return res.status(200).json({
@@ -72,6 +44,11 @@ export const authentication = async (req: Request, res: Response) => {
         return res.status(500).json({ message: error.message });
       }
     }
+
+    if (error instanceof AuthenticationError) {
+      return res.status(401).json({ message: error.message });
+    }
+
     return res.status(500).json({ message: "Internal server error" });
   }
 };
