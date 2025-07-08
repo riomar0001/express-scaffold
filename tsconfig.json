@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": "./",
+        "typeRoots": [
+            "./src/types",
+            "./node_modules/@types"
+        ],
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@controllers/*": [
+                "./src/v1/controllers/*"
+            ],
+            "@middlewares/*": [
+                "./src/v1/middlewares/*"
+            ],
+            "@configs/*": [
+                "./src/configs/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ],
+            "@routes/*": [
+                "./src/v1/routes/*"
+            ],
+            "@validators/*": [
+                "./src/v1/validator/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

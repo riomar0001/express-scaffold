@@ -1,0 +1,65 @@
+# Node.js dependencies
+node_modules
+
+# Compiled TypeScript files
+dist/
+build/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+
+# PM2 process file
+pm2-log.json
+
+# Docker files
+docker-compose.override.yml
+
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+debug.log
+error.log
+*.gz
+
+# MacOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Prisma migrations & generated files
+prisma/migrations/
+prisma/generated/
+prisma/dev.db
+prisma/dev.db-journal
+
+# Lock files
+.lock-wscript
+.lock-wscript.json
+
+# Temporary files
+tmp/
+temp/
