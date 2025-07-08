@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import prisma from "@/config/prismaConfig";
+import prisma from "@configs/prisma.config";
 import jwt from "jsonwebtoken";
-import { verifyHashedRefreshToken } from "@/utils/tokenHashing";
-import dotenv from "dotenv";
-dotenv.config();
+import { verifyHashedRefreshToken } from "@utils/tokenHashing";
+import "@configs/env.config";
 
 export const logout = async (req: Request, res: Response) => {
   try {

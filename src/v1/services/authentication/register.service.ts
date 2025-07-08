@@ -1,11 +1,11 @@
-import prisma from "@/config/prismaConfig";
-import { hashPassword } from "@/utils/passwordHashing";
+import prisma from "@configs/prisma.config";
+import { hashPassword } from "@utils/passwordHashing";
 import {
   generateAccessToken,
   generateRefreshToken,
-} from "@/utils/tokenGenerations";
-import { truncateIp } from "@/utils/truncateIP";
-import { RegistrationError } from "@/utils/customErrors";
+} from "@utils/tokenGenerations";
+import { truncateIp } from "@utils/truncateIP";
+import { RegistrationError } from "@utils/customErrors";
 
 export const registerService = async (
   email: string,

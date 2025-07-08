@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import prisma from "@/config/prismaConfig";
+import prisma from "@configs/prisma.config";
 import { hashRefreshToken } from "@/utils/tokenHashing";
 import { v4 as uuidv4 } from "uuid";
 import { AccessTokenPayload } from "@/types/token";
-dotenv.config();
+import "@configs/env.config";
 
 /**
  * This function generates an access token using the provided payload.

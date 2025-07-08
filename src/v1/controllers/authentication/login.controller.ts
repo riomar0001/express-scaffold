@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { matchedData, validationResult } from "express-validator";
-import { loginService } from "@/v1/services/authentication/login.service";
-import { AuthenticationError } from "@/utils/customErrors";
-import { errorResponse, successResponse } from "@/utils/responseHandler";
+import { loginService } from "@services/authentication/login.service";
+import { AuthenticationError } from "@utils/customErrors";
+import { errorResponse, successResponse } from "@utils/responseHandler";
 
 export const login = async (req: Request, res: Response) => {
   const errors = validationResult(req);

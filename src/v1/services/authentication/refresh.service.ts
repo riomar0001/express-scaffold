@@ -1,20 +1,18 @@
-import { Request, Response } from "express";
-import prisma from "@/config/prismaConfig";
-import { generateAccessToken } from "@/utils/tokenGenerations";
+import prisma from "@configs/prisma.config";
+import { generateAccessToken } from "@utils/tokenGenerations";
 import jwt from "jsonwebtoken";
-import { verifyHashedRefreshToken } from "@/utils/tokenHashing";
-import { EmptyTokenError, NotFoundError } from "@/utils/customErrors";
-import { AuthenticationError } from "@/utils/customErrors";
+import { verifyHashedRefreshToken } from "@utils/tokenHashing";
+import { EmptyTokenError, NotFoundError } from "@utils/customErrors";
+import { AuthenticationError } from "@utils/customErrors";
 import { RefreshTokenPayload } from "@/types/token";
-import { truncateIp } from "@/utils/truncateIP";
-import dotenv from "dotenv";
-dotenv.config();
+import { truncateIp } from "@utils/truncateIP";
+import "@configs/env.config";
 
 export const refreshService = async (
   refresh_token: string,
   ip_address: string,
   user_agent: string
-) => {
+): Promise<string> => {
   if (!refresh_token) {
     throw new EmptyTokenError("Refresh token is required");
   }

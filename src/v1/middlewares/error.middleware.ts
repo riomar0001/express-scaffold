@@ -4,9 +4,7 @@ import { Request, Response, NextFunction } from "express";
 
 export const errorHandler = (
   err: CustomError,
-  req: Request,
   res: Response,
-  next: NextFunction
 ) => {
   const statusCode = err.statusCode || res.statusCode || 500;
 

@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { refreshService } from "@/v1/services/authentication/refresh.service";
+import { refreshService } from "@services/authentication/refresh.service";
 import { AuthenticationError, NotFoundError } from "@/utils/customErrors";
-import { errorResponse, successResponse } from "@/utils/responseHandler";
-import dotenv from "dotenv";
-dotenv.config();
+import { errorResponse, successResponse } from "@utils/responseHandler";
+import "@configs/env.config";
 
 export const refreshToken = async (req: Request, res: Response) => {
   try {

@@ -1,7 +1,7 @@
 {
-  "name": "bayaw-job-portal",
+  "name": "express-scaffold",
   "version": "1.0.0",
-  "description": "Backend API for Job Portal",
+  "description": "A simple express scaffold with authentication and authorization",
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,13 +13,6 @@
   "author": "riomar0001",
   "license": "ISC",
   "type": "module",
-  "_moduleAliases": {
-    "@controllers": "./src/controllers",
-    "@middlewares": "./src/middlewares",
-    "@configs": "./src/utils",
-    "@routes": "./src/routes",
-    "@validators": "./src/routes"
-  },
   "dependencies": {
     "@prisma/client": "^6.3.1",
     "@supabase/supabase-js": "^2.48.1",
@@ -41,6 +34,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/multer": "^1.4.12",

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { errorResponse } from "@/utils/responseHandler";
+import { errorResponse } from "@utils/responseHandler";
 
 export const checkRole =
   (...allowedRoles: string[]) =>
