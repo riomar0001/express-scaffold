@@ -1,46 +1,50 @@
-import { verifyPassword } from "@/utils/passwordHashing";
 import prisma from "@/config/prismaConfig";
+import { hashPassword } from "@/utils/passwordHashing";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "@/utils/tokenGenerations";
 import { truncateIp } from "@/utils/truncateIP";
-import { AuthenticationError } from "@/utils/customErrors";
+import { RegistrationError } from "@/utils/customErrors";
 
-export const loginService = async (
+export const registerService = async (
   email: string,
   password: string,
   ip_address: string,
   userAgent: string
 ) => {
-  const user = await prisma.user.findUnique({
+  const existingUser = await prisma.user.findUnique({
     where: { email },
   });
 
-  if (!user) {
-    throw new AuthenticationError("Invalid credentials");
+  if (existingUser) {
+    throw new RegistrationError("Email already registered");
   }
 
-  const isPasswordValid = await verifyPassword(password, user.password);
+  const hashedPassword = await hashPassword(password);
 
-  if (!isPasswordValid) {
-    throw new AuthenticationError("Invalid credentials");
-  }
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      role: "ADMIN",
+    },
+  });
 
   const truncatedIp = truncateIp(ip_address);
   const user_agent = userAgent || "";
-
-  const refreshToken = await generateRefreshToken(
-    user.id,
-    truncatedIp as string,
-    user_agent
-  );
 
   const accessToken = generateAccessToken({
     user_id: user.id,
     email: user.email,
     role: user.role,
   });
+
+  const refreshToken = await generateRefreshToken(
+    user.id,
+    truncatedIp as string,
+    user_agent
+  );
 
   return {
     accessToken,

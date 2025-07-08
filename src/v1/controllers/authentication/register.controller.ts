@@ -1,17 +1,14 @@
 import { Request, Response } from "express";
-import prisma from "@/config/prismaConfig";
 import { matchedData, validationResult } from "express-validator";
-import { hashPassword } from "@/utils/passwordHashing";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "@/utils/tokenGenerations";
-import { truncateIp } from "@/utils/truncateIP";
+import { registerService } from "@/v1/services/authentication/register.service";
+import { RegistrationError } from "@/utils/customErrors";
+import { errorResponse, successResponse } from "@/utils/responseHandler";
 
 export const registration = async (req: Request, res: Response) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return errorResponse(res, errors.array(), 400);
   }
 
   const data = matchedData(req);
@@ -19,40 +16,11 @@ export const registration = async (req: Request, res: Response) => {
   const { email, password } = data as { email: string; password: string };
 
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return res
-        .status(409)
-        .json({ message: "User already exists with this email" });
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        role: "ADMIN",
-      },
-    });
-
-    const accessToken = generateAccessToken({
-      user_id: user.id,
-      email: user.email,
-      role: user.role,
-    });
-
-    const ip_address = req.ip as string;
-    const truncatedIp = truncateIp(ip_address);
-    const user_agent = req.headers["user-agent"] || "";
-
-    const { token: refreshToken } = await generateRefreshToken(
-      user.id,
-      truncatedIp as string,
-      user_agent
+    const { user, refreshToken, accessToken } = await registerService(
+      email,
+      password,
+      req.ip as string,
+      req.headers["user-agent"] || ""
     );
 
     res.cookie("refresh_token", refreshToken, {
@@ -62,21 +30,27 @@ export const registration = async (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).json({
-      message: "User registered successfully",
+    return successResponse(res, 201, "Registration successful", {
+      accessToken,
       user: {
-        user_id: user.id,
+        id: user.id,
         email: user.email,
         role: user.role,
       },
-      accessToken,
     });
   } catch (error: any) {
+
+    // If in development mode, return detailed error messages for debugging :)
     if (process.env.NODE_ENV === "DEVELOPMENT") {
       if (error.name === "JsonWebTokenError") {
-        return res.status(500).json({ message: error.message });
+        return errorResponse(res, error.message, 500);
       }
     }
-    return res.status(500).json({ message: "Internal server error" });
+
+    if (error instanceof RegistrationError) {
+      return errorResponse(res, error.message, 401);
+    }
+
+    return errorResponse(res, "Internal server error", 500);
   }
 };

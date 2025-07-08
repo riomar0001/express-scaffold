@@ -17,6 +17,12 @@ export class AuthenticationError extends AppError {
   }
 }
 
+export class RegistrationError extends AppError {
+  constructor(message = "Registration failed") {
+    super(message, 400, "RegistrationError");
+  }
+}
+
 export class ValidationError extends AppError {
   constructor(message = "Validation failed") {
     super(message, 400, "ValidationError");
