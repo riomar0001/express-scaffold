@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "@configs/prisma.config";
 import jwt from "jsonwebtoken";
 import { verifyHashedRefreshToken } from "@utils/tokenHashing";
-import "@configs/env.config";
+import "@/configs/dotenv.config";
 
 export const logout = async (req: Request, res: Response) => {
   try {

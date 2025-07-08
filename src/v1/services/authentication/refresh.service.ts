@@ -6,7 +6,7 @@ import { EmptyTokenError, NotFoundError } from "@utils/customErrors";
 import { AuthenticationError } from "@utils/customErrors";
 import { RefreshTokenPayload } from "@/types/token";
 import { truncateIp } from "@utils/truncateIP";
-import "@configs/env.config";
+import "@/configs/dotenv.config";
 
 export const refreshService = async (
   refresh_token: string,

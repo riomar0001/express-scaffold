@@ -3,7 +3,7 @@ import prisma from "@configs/prisma.config";
 import { hashRefreshToken } from "@/utils/tokenHashing";
 import { v4 as uuidv4 } from "uuid";
 import { AccessTokenPayload } from "@/types/token";
-import "@configs/env.config";
+import "@/configs/dotenv.config";
 
 /**
  * This function generates an access token using the provided payload.

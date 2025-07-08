@@ -1,21 +1,30 @@
 import express, { Response, Request } from "express";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
+
 import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import helmet from "helmet";
+
 import authRouter from "./v1/routes/authentication.route";
 import { errorHandler, notFound } from "./v1/middlewares/error.middleware";
+import { cacheControl } from "./v1/middlewares/cacheControl.middleware";
 
-dotenv.config();
+//load environment variables
+import "@/configs/dotenv.config";
 
 const app = express();
 
-// Allowed Origins
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+// ---------- SECURITY & PERFORMANCE MIDDLEWARE ----------
+app.use(helmet());
+app.use(cacheControl);
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// CORS
+// ---------- CORS CONFIGURATION ----------
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
 app.use(
   cors({
     origin: (origin: string | undefined, callback) => {
@@ -31,13 +40,10 @@ app.use(
   })
 );
 
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
+// ---------- ROUTES ----------
 app.use("/api/v1/auth", authRouter);
 
+// ---------- SERVE FRONTEND ----------
 app.get("/", (req: Request, res: Response) => {
   //@ts-expect-error
   const __filename = fileURLToPath(import.meta.url);
@@ -51,8 +57,10 @@ app.get("/", (req: Request, res: Response) => {
   }
 });
 
-// Error Handling Middleware
-app.use(errorHandler);
+// ---------- 404 HANDLER ----------
 app.use(notFound);
+
+// ---------- ERROR HANDLER ----------
+app.use(errorHandler);
 
 export default app;

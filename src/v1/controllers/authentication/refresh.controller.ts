@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { refreshService } from "@services/authentication/refresh.service";
 import { AuthenticationError, NotFoundError } from "@/utils/customErrors";
 import { errorResponse, successResponse } from "@utils/responseHandler";
-import "@configs/env.config";
+import "@/configs/dotenv.config";
 
 export const refreshToken = async (req: Request, res: Response) => {
   try {
