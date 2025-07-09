@@ -3,7 +3,6 @@ import { matchedData, validationResult } from "express-validator";
 import { registerService } from "@services/authentication/register.service";
 import { RegistrationError } from "@utils/customErrors";
 import { errorResponse, successResponse } from "@utils/responseHandler";
-import { access } from "fs";
 
 export const registration = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -14,12 +13,17 @@ export const registration = async (req: Request, res: Response) => {
 
   const data = matchedData(req);
 
-  const { email, first_name, last_name, password } = data as {
+  const { email, first_name, last_name, password, confirm_password } = data as {
     email: string;
     first_name: string;
     last_name: string;
     password: string;
+    confirm_password: string;
   };
+
+  if (password === confirm_password) {
+    return errorResponse(res, 400, "Passwords do not match");
+  }
 
   try {
     const { user, refreshToken, accessToken } = await registerService(

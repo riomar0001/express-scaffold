@@ -41,6 +41,12 @@ export class ForbiddenError extends AppError {
   }
 }
 
+export class AccountUpdateError extends AppError {
+  constructor(message = "Account update failed") {
+    super(message, 400, "AccountUpdateError");
+  }
+}
+
 export class EmptyTokenError extends AppError {
   constructor(message = "Token error") {
     super(message, 401, "TokenError");

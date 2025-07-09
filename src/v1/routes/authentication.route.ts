@@ -4,7 +4,10 @@ import { registrationValidators } from "@validators/authValidationSchema";
 import { authenticationValidators } from "@validators/authValidationSchema";
 
 import { authMiddleware } from "@middlewares/auth.middleware";
-import { authRateLimiter } from "@middlewares/rateLimiter.middleware";
+import {
+  authRateLimiter,
+  registrationRateLimiter,
+} from "@middlewares/rateLimiter.middleware";
 import { checkRole } from "@middlewares/role.middleware";
 
 import { admin } from "@controllers/authentication/admin.controller";
@@ -23,9 +26,14 @@ const router = express.Router();
 
 router.get("/user", authMiddleware, user);
 router.get("/admin", authMiddleware, checkRole(UserRole.ADMIN), admin);
-
+ 
 router.post("/", checkSchema(authenticationValidators), authRateLimiter, login);
-router.post("/register", checkSchema(registrationValidators), registration);
+router.post(
+  "/register",
+  checkSchema(registrationValidators),
+  registrationRateLimiter,
+  registration
+);
 router.post("/refresh", refreshToken);
 router.post("/logout", logout);
 

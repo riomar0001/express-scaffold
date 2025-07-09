@@ -1,6 +1,6 @@
-# Express Scaffold
+# Express REST API Scaffold
 
-A robust Express.js API scaffold with authentication, authorization, and security features built with TypeScript, Prisma, and PostgreSQL.
+A production-ready REST API built with Express.js, featuring comprehensive authentication, authorization, and security. Built with TypeScript, Prisma ORM, and PostgreSQL for modern backend development.
 
 ## 📋 Table of Contents
 
@@ -18,29 +18,31 @@ A robust Express.js API scaffold with authentication, authorization, and securit
 
 ## ✨ Features
 
-- **Authentication & Authorization**: JWT-based authentication with role-based access control
-- **User Management**: Complete user registration, login, logout, and profile management
-- **Security**: Rate limiting, CORS, helmet security headers, password hashing
-- **Database**: PostgreSQL with Prisma ORM
-- **Token Management**: Refresh token rotation with automatic cleanup
-- **Input Validation**: Request validation using express-validator
-- **Error Handling**: Centralized error handling middleware
-- **TypeScript**: Full TypeScript support with custom type definitions
-- **Cron Jobs**: Automated cleanup of expired tokens
-- **Production Ready**: Optimized for production deployment
+- **RESTful API Design**: Clean, intuitive REST endpoints following industry standards
+- **JWT Authentication**: Stateless authentication with access and refresh tokens
+- **Role-Based Authorization**: Multi-level access control (Admin, Member, Guest)
+- **Comprehensive User Management**: Registration, login, logout, and profile operations
+- **Advanced Security**: Rate limiting, CORS, helmet headers, bcrypt password hashing
+- **PostgreSQL Integration**: Robust database with Prisma ORM for type-safe queries
+- **Token Management**: Automatic refresh token rotation with expiration cleanup
+- **Input Validation**: Strict request validation using express-validator
+- **Error Handling**: Centralized error middleware with proper HTTP status codes
+- **TypeScript**: Full type safety with custom type definitions
+- **Background Jobs**: Automated token cleanup via cron jobs
+- **Production Ready**: Environment-based configuration and security optimizations
 
 ## 🛠 Tech Stack
 
+- **API Framework**: Express.js - Fast, minimalist web framework
 - **Runtime**: Node.js
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Authentication**: JSON Web Tokens (JWT)
-- **Password Hashing**: bcryptjs
-- **Validation**: express-validator
-- **Security**: Helmet, CORS, Rate Limiting
-- **Development**: tsx, nodemon
+- **Language**: TypeScript - Full type safety and modern JS features
+- **Database**: PostgreSQL - Robust relational database
+- **ORM**: Prisma - Type-safe database client and query builder
+- **Authentication**: JSON Web Tokens (JWT) - Stateless authentication
+- **Password Security**: bcryptjs - Salt and hash passwords
+- **Validation**: express-validator - Server-side input validation
+- **Security**: Helmet, CORS, Rate Limiting - Comprehensive security layers
+- **Development Tools**: tsx, nodemon - Hot reload and development utilities
 
 ## 📁 Project Structure
 
@@ -114,7 +116,7 @@ express-scaffold/
    npm run dev
    ```
 
-The server will start on `http://localhost:3000`
+The REST API server will start on `http://localhost:3000`
 
 ## 🔧 Environment Variables
 
@@ -138,9 +140,11 @@ SUPABASE_URL="your-supabase-url"
 SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
-## 🔗 API Endpoints
+## 🔗 REST API Endpoints
 
 ### Authentication Routes (`/api/v1/auth`)
+
+All endpoints return JSON responses with consistent structure:
 
 | Method | Endpoint | Description | Auth Required | Role |
 |--------|----------|-------------|---------------|------|
@@ -150,6 +154,18 @@ SUPABASE_ANON_KEY="your-supabase-anon-key"
 | POST | `/logout` | User logout | ❌ | - |
 | GET | `/user` | Get user profile | ✅ | Any |
 | GET | `/admin` | Admin only endpoint | ✅ | Admin |
+
+### HTTP Status Codes
+
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `422` - Validation Error
+- `429` - Too Many Requests (Rate Limited)
+- `500` - Internal Server Error
 
 ### Request/Response Examples
 
@@ -161,6 +177,20 @@ Content-Type: application/json
 {
   "email": "user@example.com",
   "password": "password123"
+}
+
+# Response (200 OK)
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "cm123456789",
+      "email": "user@example.com",
+      "role": "MEMBER"
+    }
+  }
 }
 ```
 
@@ -175,6 +205,28 @@ Content-Type: application/json
   "first_name": "John",
   "last_name": "Doe"
 }
+
+# Response (201 Created)
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": "cm123456789",
+      "email": "user@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "role": "MEMBER"
+    }
+  }
+}
+```
+
+**Authentication Required Requests**
+```bash
+GET /api/v1/auth/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
 ```
 
 ## 🗃 Database Schema
@@ -205,16 +257,31 @@ Content-Type: application/json
 
 ## 🔒 Security Features
 
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcryptjs with salt rounds
-- **Rate Limiting**: Prevents brute force attacks
-- **CORS Protection**: Configurable cross-origin requests
-- **Helmet Security**: Security headers protection
-- **Input Validation**: Comprehensive request validation
-- **SQL Injection Protection**: Prisma ORM protection
-- **Token Rotation**: Automatic refresh token rotation
-- **Failed Login Tracking**: Account lockout mechanism
-- **IP Address Logging**: Security audit trail
+- **JWT Authentication**: Stateless authentication with Bearer tokens
+- **Password Security**: bcryptjs hashing with salt rounds
+- **Rate Limiting**: API endpoint protection against abuse
+- **CORS Protection**: Cross-origin request security
+- **Security Headers**: Helmet middleware for HTTP security
+- **Input Validation**: Comprehensive request body/query validation
+- **SQL Injection Prevention**: Prisma ORM parameterized queries
+- **Token Security**: Automatic refresh token rotation and cleanup
+- **Login Security**: Failed attempt tracking and account lockout
+- **Audit Trail**: IP address and user agent logging
+
+## 🏗 REST API Design Principles
+
+This API follows RESTful conventions and best practices:
+
+- **Resource-Based URLs**: Endpoints represent resources (`/users`, `/auth`)
+- **HTTP Methods**: Proper use of GET, POST, PUT, DELETE, PATCH
+- **Status Codes**: Meaningful HTTP status codes for all responses
+- **JSON Communication**: All requests and responses use JSON format
+- **Stateless**: No server-side session storage (JWT-based)
+- **Versioning**: API versioned with `/v1/` prefix for future compatibility
+- **Consistent Responses**: Standardized response format across all endpoints
+- **Error Handling**: Structured error responses with details
+- **Authentication**: Bearer token authentication for protected resources
+- **Content Negotiation**: Proper Content-Type headers
 
 ## 📝 Scripts
 
@@ -255,16 +322,18 @@ This project is licensed under the ISC License.
 
 ### 🚧 TODO / Roadmap
 
-- [ ] Add comprehensive test suite
-- [ ] Implement password reset functionality
-- [ ] Add email verification system
-- [ ] Implement user profile image upload
-- [ ] Add API documentation with Swagger
-- [ ] Add Docker configuration
-- [ ] Implement logging system
-- [ ] Add metrics and monitoring
-- [ ] Create admin dashboard
-- [ ] Add OAuth integration (Google, GitHub, etc.)
+- [ ] Add comprehensive test suite with Jest/Supertest
+- [ ] Implement password reset API endpoints
+- [ ] Add email verification REST endpoints
+- [ ] Implement file upload API for user profiles
+- [ ] Add OpenAPI/Swagger documentation
+- [ ] Create Docker configuration for containerization
+- [ ] Implement structured logging with Winston
+- [ ] Add API metrics and monitoring endpoints
+- [ ] Create admin API endpoints for user management
+- [ ] Add OAuth2 REST endpoints (Google, GitHub, etc.)
+- [ ] Implement API versioning strategy
+- [ ] Add GraphQL support as alternative to REST
 
 ### 📚 Additional Resources
 
