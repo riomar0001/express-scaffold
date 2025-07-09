@@ -12,7 +12,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     const accessToken = await refreshService(
       refresh_token,
       req.ip as string,
-      req.headers["user-agent"] as string
+      req.headers["user-agent"] || ""
     );
 
     return successResponse(res, 200, "Access Token Refreshed Successfully", {

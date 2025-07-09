@@ -10,7 +10,7 @@ export const logout = async (req: Request, res: Response) => {
     const { refresh_token } = req.cookies;
 
     const ip_address = req.ip;
-    const user_agent = req.headers["user-agent"];
+    const user_agent = req.headers["user-agent"] || "";
 
     const logoutResult = await logoutService(
       refresh_token,
