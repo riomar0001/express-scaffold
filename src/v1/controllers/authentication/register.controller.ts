@@ -14,12 +14,20 @@ export const registration = async (req: Request, res: Response) => {
 
   const data = matchedData(req);
 
-  const { email, password } = data as { email: string; password: string };
+  const { email, first_name, last_name, password } = data as {
+    email: string;
+    first_name: string;
+    last_name: string;
+    password: string;
+  };
 
   try {
     const { user, refreshToken, accessToken } = await registerService(
       email,
+      first_name,
+      last_name,
       password,
+      "USER",
       req.ip as string,
       req.headers["user-agent"] || ""
     );

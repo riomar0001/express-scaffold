@@ -70,7 +70,7 @@ export const refreshService = async (
 
   const validateHashedToken = await verifyHashedRefreshToken(
     refresh_token,
-    verifyTokenDBExist.token
+    verifyTokenDBExist.token_hash
   );
 
   if (!validateHashedToken) {

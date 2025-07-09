@@ -56,17 +56,18 @@ export const generateRefreshToken = async (
     expiresIn: "7d",
   });
 
-  const hashed = await hashRefreshToken(token);
+  const hashedToken = await hashRefreshToken(token);
 
   await prisma.refresh_token.create({
     data: {
       id: token_id,
       user_id,
-      token: hashed,
+      token_hash: hashedToken,
       ip_address: ip,
       user_agent: user_agent || "Unknown Device",
       device: user_agent || "Unknown Device",
       expires_at,
+      last_used: new Date(),
     },
   });
 

@@ -9,7 +9,10 @@ import { RegistrationError } from "@utils/customErrors";
 
 export const registerService = async (
   email: string,
+  first_name: string,
+  last_name: string,
   password: string,
+  role: string,
   ip_address: string,
   userAgent: string
 ) => {
@@ -26,8 +29,10 @@ export const registerService = async (
   const user = await prisma.user.create({
     data: {
       email,
+      first_name,
+      last_name,
       password: hashedPassword,
-      role: "ADMIN",
+      role,
     },
   });
 

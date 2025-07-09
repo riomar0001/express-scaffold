@@ -1,63 +1,26 @@
 import { Request, Response } from "express";
-import prisma from "@configs/prisma.config";
 import jwt from "jsonwebtoken";
-import { verifyHashedRefreshToken } from "@utils/tokenHashing";
+import { logoutService } from "@/v1/services/authentication/logout.service";
+import { AuthenticationError, NotFoundError } from "@/utils/customErrors";
+import { successResponse, errorResponse } from "@/utils/responseHandler";
 import "@/configs/dotenv.config";
 
 export const logout = async (req: Request, res: Response) => {
   try {
     const { refresh_token } = req.cookies;
 
-    const forbidden = () =>
-      res.status(403).json({ message: "Invalid or expired refresh token" });
+    const ip_address = req.ip;
+    const user_agent = req.headers["user-agent"];
 
-    if (!refresh_token) {
-      return res.status(401).json({ message: "No refresh token provided" });
-    }
-
-    const verifyToken = jwt.verify(
+    const logoutResult = await logoutService(
       refresh_token,
-      process.env.JWT_REFRESH_TOKEN_SECRET as string
-    ) as {
-      token_id?: string;
-      user_id?: string;
-    };
-
-    if (!verifyToken || !verifyToken.token_id || !verifyToken.user_id) {
-      return forbidden();
-    }
-
-    const tokenExists = await prisma.refresh_token.findUnique({
-      where: { id: verifyToken.token_id },
-    });
-
-    if (!tokenExists) {
-      return forbidden();
-    }
-
-    if (!tokenExists?.is_active) {
-      return forbidden();
-    }
-
-    if (new Date(tokenExists.expires_at) < new Date()) {
-      return forbidden();
-    }
-
-    const validToken = await verifyHashedRefreshToken(
-      refresh_token,
-      tokenExists.token
+      ip_address as string,
+      user_agent as string
     );
 
-    if (!validToken) {
-      return forbidden();
+    if (!logoutResult) {
+      return errorResponse(res, 400, "Logout failed");
     }
-
-    await prisma.refresh_token.update({
-      where: { id: tokenExists.id },
-      data: {
-        is_active: false,
-      },
-    });
 
     res.clearCookie("refresh_token", {
       httpOnly: true,
@@ -65,14 +28,26 @@ export const logout = async (req: Request, res: Response) => {
       sameSite: "strict",
     });
 
-    return res.status(200).json({
-      message: "User logged out successfully",
-    });
+    return successResponse(res, 200, "User logged out successfully");
   } catch (error: any) {
-    if (error.name === "TokenExpiredError") {
-      return res.status(403).json({ message: "Refresh token expired" });
+    if (process.env.NODE_ENV === "DEVELOPMENT") {
+      if (error instanceof jwt.JsonWebTokenError) {
+        return errorResponse(res, 400, error.message);
+      }
     }
-    console.error("Error during logout:", error);
+
+    if (error instanceof jwt.TokenExpiredError) {
+      return errorResponse(res, 401, error.message);
+    }
+
+    if (error instanceof AuthenticationError) {
+      return errorResponse(res, 401, error.message);
+    }
+
+    if (error instanceof NotFoundError) {
+      return errorResponse(res, 404, error.message);
+    }
+
     return res.status(500).json({ message: "Internal server error" });
   }
 };

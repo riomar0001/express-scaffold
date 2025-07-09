@@ -14,37 +14,85 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model user {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  first_name  String
-  last_name   String
-  password    String
-  role        String
-  last_login  DateTime? @default(now())
-  is_active   Boolean   @default(true)
-  is_verified Boolean   @default(false)
-  is_deleted  Boolean   @default(false)
-  verified_at DateTime? 
-  deleted_at  DateTime? 
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+}
 
-  Token refresh_token[]
+model user {
+  id         String     @id @default(cuid())
+  email      String     @unique
+  first_name String
+  last_name  String
+  password   String
+  role       String
+  status     UserStatus @default(PENDING_VERIFICATION)
+
+  // Authentication & Security
+  email_verified        Boolean   @default(false)
+  email_verified_at     DateTime?
+  password_changed_at   DateTime  @default(now())
+  failed_login_attempts Int       @default(0)
+  locked_until          DateTime?
+
+  // Activity tracking
+  last_login_at    DateTime?
+  last_activity_at DateTime?
+  login_count      Int       @default(0)
+
+  // Soft delete
+  deleted_at DateTime?
+
+  // Audit fields
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relationships
+  refresh_tokens refresh_token[]
+
+  // Indexes for performance
+  @@index([email])
+  @@index([status])
+  @@index([role])
+  @@index([created_at])
+  @@index([last_login_at])
+  @@index([deleted_at])
+
+  // Table name
+  @@map("users")
 }
 
 model refresh_token {
-  id         String    @id @default(uuid())
+  id         String @id @default(cuid())
   user_id    String
-  token      String    @unique
-  ip_address String
-  user_agent String
-  device     String
-  is_active  Boolean   @default(true)
-  revoke_at  DateTime? @updatedAt
-  expires_at DateTime
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  token_hash String @unique
 
-  user user @relation(fields: [user_id], references: [id])
+  // Device information
+  ip_address String?
+  user_agent String?
+  device     String?
+
+  // Token lifecycle
+  is_active  Boolean   @default(true)
+  revoked_at DateTime?
+  expires_at DateTime
+  last_used  DateTime?
+
+  // Audit fields
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Foreign key relationship
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Indexes for performance
+  @@index([user_id])
+  @@index([expires_at])
+  @@index([is_active])
+  @@index([token_hash])
+  // Table name in database
+  @@map("refresh_tokens")
 }
