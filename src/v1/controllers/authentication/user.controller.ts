@@ -1,33 +1,20 @@
 import { Request, Response } from "express";
-import prisma from "@configs/prisma.config";
+import { adminService } from "@/v1/services/authentication/admin.service";
+import { errorResponse, successResponse } from "@/utils/responseHandler";
+import { NotFoundError } from "@/utils/customErrors";
 
 export const user = async (req: Request, res: Response) => {
   try {
-    const { id, email, role } = req.user as {
-      id: string;
-      email: string;
-      role: string;
-    };
+    const { id } = req.user as { id: string };
 
-    const user = await prisma.user.findUnique({
-      where: { id: id },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-      },
-    });
+    const user = await adminService(id);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    return successResponse(res, 200, "Welcome User", { user });
+  } catch (error: any) {
+    if (error instanceof NotFoundError) {
+      return errorResponse(res, 404, error.message);
     }
 
-    return res.status(200).json({
-      message: "Welcome User",
-      user,
-    });
-  } catch (error) {
-    console.error("Error accessing admin:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return errorResponse(res, 500, "Internal server error");
   }
 };
