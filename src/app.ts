@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
 import helmet from "helmet";
 
 import authRouter from "./v1/routes/authentication.route";
@@ -45,9 +44,6 @@ app.use("/api/v1/auth", authRouter);
 
 // ---------- SERVE FRONTEND ----------
 app.get("/", (req: Request, res: Response) => {
-  //@ts-expect-error
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   const distPath = path.join(__dirname, "../frontend/dist", "index.html");
 
   if (fs.existsSync(distPath)) {
