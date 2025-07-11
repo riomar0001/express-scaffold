@@ -22,6 +22,7 @@ cron.schedule("0 * * * *", async () => {
       },
       data: {
         is_active: false,
+        revoked_at: new Date(),
       },
     });
 

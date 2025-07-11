@@ -1,4 +1,4 @@
-import app from "./src/app";
+import app from "./app";
 import "@cron/cleanupExpiredTokens.cron";
 const PORT = process.env.PORT || 3000;
 
