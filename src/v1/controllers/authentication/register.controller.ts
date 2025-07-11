@@ -21,7 +21,7 @@ export const registration = async (req: Request, res: Response) => {
     confirm_password: string;
   };
 
-  if (password === confirm_password) {
+  if (password !== confirm_password) {
     return errorResponse(res, 400, "Passwords do not match");
   }
 
