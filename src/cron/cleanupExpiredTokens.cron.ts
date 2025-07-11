@@ -6,14 +6,6 @@ cron.schedule("0 * * * *", async () => {
   console.log("Running expired token cleanup...");
 
   try {
-    // const deleted = await prisma.refresh_token.deleteMany({
-    //   where: {
-    //     expires_at: {
-    //       lt: new Date(),
-    //     },
-    //   },
-    // });
-
     const revokeTokens = await prisma.refresh_token.updateMany({
       where: {
         expires_at: {
