@@ -90,7 +90,7 @@ express-scaffold/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/riomar0001/express-scaffold
    cd express-scaffold
    ```
 
