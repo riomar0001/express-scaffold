@@ -4,14 +4,8 @@ import { hashRefreshToken } from "@/utils/tokenHashing";
 import { v4 as uuidv4 } from "uuid";
 import { AccessTokenPayload } from "@/types/token";
 import "@/configs/dotenv.config";
+import { sign } from "jsonwebtoken";
 
-/**
- * This function generates an access token using the provided payload.
- * The access token is signed with a secret and has a validity of 3 hours.
- * It includes the user's ID, email, and role in the token payload.
- * @param tokenPayload - The payload containing user_id, email, and role.
- * @returns A signed JWT access token.
- */
 export const generateAccessToken = (
   tokenPayload: AccessTokenPayload
 ): string => {
@@ -25,20 +19,11 @@ export const generateAccessToken = (
     throw new Error("Invalid token payload for access token generation.");
   }
 
-  return jwt.sign({ user_id, email, role }, SECRET, {
+  return sign({ user_id, email, role }, SECRET, {
     expiresIn: "3h",
   });
 };
 
-/**
- * This function generates a refresh token and sets it as a cookie in the response.
- * The refresh token is signed with a secret and has a validity of 7 days.
- * It also stores the token in the database with additional metadata.
- * @param user_id - The ID of the user for whom the refresh token is generated.
- * @param ip - The IP address of the user.
- * @param user_agent - The user agent string of the user's device.
- * @return A promise that resolves to an object containing the token, token_id, and expiration date.
- */
 export const generateRefreshToken = async (
   user_id: string,
   ip: string,
