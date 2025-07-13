@@ -9,9 +9,12 @@ generator client {
 }
 
 datasource db {
+
+  // This is the database connection configuration
   provider  = "postgresql"
+
+  // Use the DATABASE_URL environment variable to connect to your database
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum UserStatus {
