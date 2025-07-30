@@ -14,6 +14,13 @@ import {
   AuthenticationError,
 } from "@utils/customErrors";
 import { RefreshTokenPayload } from "@/types/token";
+import {
+  FetchUserInfoResult,
+  LoginResult,
+  PasswordUpdateResult,
+  RefreshTokenResult,
+  RegistrationResult,
+} from "@/types/auth";
 import "@/configs/dotenv.config";
 import {
   getUserByEmail,
@@ -25,44 +32,6 @@ import {
   verifyRefreshToken,
   revokeRefreshToken,
 } from "../repositories/auth.repository";
-
-interface PasswordUpdateResult {
-  updatedAt: Date;
-  userId: string;
-}
-
-interface RefreshTokenResult {
-  accessToken: string;
-  refreshToken?: string;
-}
-
-interface LoginResult {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
-
-interface RegistrationResult {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
-
-interface FetchUserInfoResult {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  role: string;
-}
 
 export const registerUser = async (
   email: string,

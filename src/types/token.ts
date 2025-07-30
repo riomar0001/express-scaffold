@@ -1,16 +1,16 @@
-type AccessTokenPayloadTypes = {
+export type AccessTokenPayloadTypes = {
   user_id: string;
   email: string;
   role: string;
 };
 
-type RefreshTokenData = {
+export type RefreshTokenData = {
   token: string;
   token_id: string;
   expires_at: Date;
 };
 
-interface RefreshTokenPayload {
+export interface RefreshTokenPayload {
   token_id: string;
   user_id: string;
   iat?: number;
