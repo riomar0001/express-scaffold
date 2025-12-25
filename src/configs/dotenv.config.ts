@@ -1,2 +1,2 @@
-import dotenv from "dotenv";
-export default dotenv.config();
+// Re-export validated environment for backward compatibility
+export { env } from "./env.config";

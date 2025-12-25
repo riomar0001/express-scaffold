@@ -17,7 +17,7 @@ import {
   AccountUpdateError,
 } from "@utils/customErrors";
 import { errorResponse, successResponse } from "@utils/responseHandler";
-import "@/configs/dotenv.config";
+import { env } from "@/configs/env.config";
 
 export const handleRegistration = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -53,7 +53,7 @@ export const handleRegistration = async (req: Request, res: Response) => {
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "PRODUCTION",
+      secure: env.NODE_ENV === "PRODUCTION",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -67,11 +67,8 @@ export const handleRegistration = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    // If in development mode, return detailed error messages for debugging :)
-    if (process.env.NODE_ENV === "DEVELOPMENT") {
-      if (error.name === "JsonWebTokenError") {
-        return errorResponse(res, 500, error.message);
-      }
+    if (env.NODE_ENV === "DEVELOPMENT" && error.name === "JsonWebTokenError") {
+      return errorResponse(res, 500, error.message);
     }
 
     if (error instanceof RegistrationError) {
@@ -103,7 +100,7 @@ export const handleLogin = async (req: Request, res: Response) => {
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "PRODUCTION",
+      secure: env.NODE_ENV === "PRODUCTION",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -117,10 +114,8 @@ export const handleLogin = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    if (process.env.NODE_ENV === "DEVELOPMENT") {
-      if (error.name === "JsonWebTokenError") {
-        return errorResponse(res, 500, error.message);
-      }
+    if (env.NODE_ENV === "DEVELOPMENT" && error.name === "JsonWebTokenError") {
+      return errorResponse(res, 500, error.message);
     }
 
     if (error instanceof AuthenticationError) {
@@ -146,16 +141,14 @@ export const handleLogout = async (req: Request, res: Response) => {
 
     res.clearCookie("refresh_token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "PRODUCTION",
+      secure: env.NODE_ENV === "PRODUCTION",
       sameSite: "strict",
     });
 
     return successResponse(res, 200, "User logged out successfully");
   } catch (error: any) {
-    if (process.env.NODE_ENV === "DEVELOPMENT") {
-      if (error instanceof jwt.JsonWebTokenError) {
-        return errorResponse(res, 400, error.message);
-      }
+    if (env.NODE_ENV === "DEVELOPMENT" && error instanceof jwt.JsonWebTokenError) {
+      return errorResponse(res, 400, error.message);
     }
 
     if (error instanceof jwt.TokenExpiredError) {
@@ -170,7 +163,7 @@ export const handleLogout = async (req: Request, res: Response) => {
       return errorResponse(res, 404, error.message);
     }
 
-    return res.status(500).json({ message: "Internal server error" });
+    return errorResponse(res, 500, "Internal server error");
   }
 };
 
@@ -231,10 +224,8 @@ export const handleTokenRefresh = async (req: Request, res: Response) => {
       access_token: accessToken,
     });
   } catch (error: any) {
-    if (process.env.NODE_ENV === "DEVELOPMENT") {
-      if (error instanceof jwt.JsonWebTokenError) {
-        return errorResponse(res, 400, error.message);
-      }
+    if (env.NODE_ENV === "DEVELOPMENT" && error instanceof jwt.JsonWebTokenError) {
+      return errorResponse(res, 400, error.message);
     }
 
     if (error instanceof jwt.TokenExpiredError) {
@@ -249,6 +240,6 @@ export const handleTokenRefresh = async (req: Request, res: Response) => {
       return errorResponse(res, 404, error.message);
     }
 
-    return res.status(500).json({ message: "Internal server error" });
+    return errorResponse(res, 500, "Internal server error");
   }
 };

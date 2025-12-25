@@ -28,6 +28,7 @@
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0" /* Silence deprecation warnings for baseUrl and moduleResolution */,
 
     // "paths" is used to set up module resolution paths
     "paths": {
@@ -38,7 +39,8 @@
       "@controllers/*": ["./src/v1/controllers/*"],
       "@middlewares/*": ["./src/v1/middlewares/*"],
       "@validators/*": ["./src/v1/validators/*"],
-      "@templates/*": ["src/templates/*"]
+      "@cron/*": ["./src/cron/*"],
+      "@templates/*": ["./src/templates/*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     "typeRoots": ["./src/@types", "./node_modules/@types"],

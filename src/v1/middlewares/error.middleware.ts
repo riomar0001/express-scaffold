@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-
-// Optional: extend Error to support statusCode
+import { CustomError } from "@/types/error";
+import { env } from "@/configs/env.config";
 
 export const errorHandler = (
   err: CustomError,
@@ -10,15 +10,12 @@ export const errorHandler = (
 ) => {
   const statusCode = err.statusCode || res.statusCode || 500;
 
+  const isDev = env.NODE_ENV === "DEVELOPMENT";
+
   const response = {
     success: false,
-    message:
-      process.env.NODE_ENV === "DEVELOPMENT"
-        ? err.message
-        : "Something went wrong. Please try again later.",
-    ...(process.env.NODE_ENV === "DEVELOPMENT" && {
-      stack: err.stack,
-    }),
+    message: isDev ? err.message : "Something went wrong. Please try again later.",
+    ...(isDev && { stack: err.stack }),
   };
 
   return res.status(statusCode).json(response);

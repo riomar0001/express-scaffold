@@ -1,8 +1,9 @@
 import "module-alias/register";
+import { env } from "@/configs/env.config";
 import app from "./app";
 import "@cron/cleanupExpiredTokens.cron";
-const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(env.PORT, () => {
+  console.log(`Server running on http://localhost:${env.PORT}`);
+  console.log(`Environment: ${env.NODE_ENV}`);
 });
